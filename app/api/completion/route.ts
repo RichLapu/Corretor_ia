@@ -23,8 +23,8 @@ export async function POST(req: Request) {
       system: selectedInstruction,
       prompt: prompt,
     });
-
-    // @ts-expect-error - Ignorando o aviso visual de tipagem do VSCode
+    
+    // Devolve o fluxo de dados em formato de Texto Puro (Plain Text)
     return result.toTextStreamResponse();
 
   } catch (error) {
