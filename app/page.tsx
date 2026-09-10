@@ -19,7 +19,6 @@ export default function Home() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [showDiff, setShowDiff] = useState(true);
   
-  // NOVO ESTADO: Guarda o texto exato que foi enviado para a IA
   const [submittedText, setSubmittedText] = useState("");
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export default function Home() {
 
   const {
     completion,
-    setCompletion, // <-- Adicionamos para poder restaurar o texto da direita
+    setCompletion,
     input,
     setInput,
     handleInputChange,
@@ -57,9 +56,8 @@ export default function Home() {
     }
   });
 
-  // NOVO: Intercepta o envio do formulário para salvar o texto original congelado
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    setSubmittedText(input); // Congela o texto para a comparação não quebrar
+    setSubmittedText(input);
     handleSubmit(e);
   };
 
@@ -75,11 +73,10 @@ export default function Home() {
     localStorage.removeItem("text-optimizer-history");
   };
 
-  // ATUALIZADO: Agora restaura o estado completo da aplicação
   const restoreHistoryItem = (item: HistoryItem) => {
     setInput(item.original);
-    setSubmittedText(item.original); // Garante que a diferença funcione ao restaurar
-    setCompletion(item.optimized);   // Preenche a caixa da direita
+    setSubmittedText(item.original); 
+    setCompletion(item.optimized);   
     setOption(item.mode);
   };
 
@@ -128,8 +125,8 @@ export default function Home() {
   if (!isMounted) return <div className="min-h-screen bg-slate-50"></div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-800">
-      <main className="max-w-5xl mx-auto space-y-8">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans text-slate-800 flex flex-col justify-between">
+      <main className="max-w-5xl w-full mx-auto space-y-8 flex-1">
         
         {/* Cabeçalho */}
         <div className="flex items-center gap-3">
@@ -162,7 +159,6 @@ export default function Home() {
         </div>
 
         {/* Área de Texto */}
-        {/* ATUALIZADO: onSubmit agora aponta para a nossa função customizada */}
         <form onSubmit={onSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6" suppressHydrationWarning>
           {/* Coluna 1: Input Original */}
           <div className="flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-blue-100 transition-all">
@@ -225,7 +221,6 @@ export default function Home() {
             
             <div className="w-full h-full min-h-[320px] p-4 overflow-y-auto whitespace-pre-wrap text-slate-700 bg-transparent leading-relaxed">
               {completion ? (
-                // ATUALIZADO: renderDiff agora compara com submittedText e não mais com input
                 showDiff ? renderDiff(submittedText, completion) : completion
               ) : (
                 <div className="h-full flex items-center justify-center text-slate-400 text-sm text-center px-8">
@@ -274,6 +269,21 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      {/* Footer Adicionado */}
+      <footer className="max-w-5xl w-full mx-auto mt-12 pt-6 pb-2 border-t border-slate-200 text-center text-sm text-slate-500">
+        <p>
+          &copy; {new Date().getFullYear()} Todos os direitos reservados. Desenvolvido por :{" "}
+          <a 
+            href="https://www.linkedin.com/in/richard-lapuente/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            Richard Lapuente
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
