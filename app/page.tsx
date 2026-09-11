@@ -12,6 +12,15 @@ type HistoryItem = {
   mode: string;
 };
 
+const options = [
+  { id: 'corrigir', label: 'Corrigir Erros', icon: <Wand2 size={16} /> },
+  { id: 'formal', label: 'Mais Formal', icon: <Type size={16} /> },
+  { id: 'operacional', label: 'Relatório Oper', icon: <ClipboardList size={16} /> },
+  { id: 'academico', label: 'Acadêmico', icon: <BookOpen size={16} /> },
+  { id: 'expandir', label: 'Expandir', icon: <AlignLeft size={16} /> },
+  { id: 'resumir', label: 'Resumir', icon: <AlignLeft size={16} className="rotate-180" /> },
+];
+
 export default function Home() {
   const [option, setOption] = useState("corrigir");
   const [isCopied, setIsCopied] = useState(false);
@@ -22,6 +31,7 @@ export default function Home() {
   const [submittedText, setSubmittedText] = useState("");
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     const savedHistory = localStorage.getItem("text-optimizer-history");
     if (savedHistory) {
@@ -111,16 +121,7 @@ export default function Home() {
   };
 
   const inputStats = getStats(input);
-  const outputStats = getStats(completion);
-
-  const options = [
-    { id: 'corrigir', label: 'Corrigir Erros', icon: <Wand2 size={16} /> },
-    { id: 'formal', label: 'Mais Formal', icon: <Type size={16} /> },
-    { id: 'operacional', label: 'Relatório Oper', icon: <ClipboardList size={16} /> },
-    { id: 'academico', label: 'Acadêmico', icon: <BookOpen size={16} /> },
-    { id: 'expandir', label: 'Expandir', icon: <AlignLeft size={16} /> },
-    { id: 'resumir', label: 'Resumir', icon: <AlignLeft size={16} className="rotate-180" /> },
-  ];
+  // outputStats removido por não ser utilizado
 
   if (!isMounted) return <div className="min-h-screen bg-slate-50"></div>;
 
@@ -163,12 +164,13 @@ export default function Home() {
           {/* Coluna 1: Input Original */}
           <div className="flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden focus-within:ring-2 focus-within:ring-blue-100 transition-all">
             <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center">
-              <label className="text-sm font-semibold text-slate-700">Texto Original</label>
+              <label htmlFor="original-text" className="text-sm font-semibold text-slate-700">Texto Original</label>
               <span className="text-xs text-slate-400 font-medium">
                 {inputStats.words} palavras | {inputStats.chars} caracteres
               </span>
             </div>
             <textarea
+              id="original-text"
               className="w-full h-80 p-4 focus:ring-0 outline-none resize-none text-slate-700 bg-transparent leading-relaxed"
               placeholder="Cole ou digite seu texto aqui..."
               value={input}
@@ -192,7 +194,7 @@ export default function Home() {
           {/* Coluna 2: Output da IA */}
           <div className="flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden relative">
             <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center">
-              <label className="text-sm font-semibold text-slate-700">Texto Otimizado</label>
+              <label htmlFor="optimized-text" className="text-sm font-semibold text-slate-700">Texto Otimizado</label>
               
               <div className="flex items-center gap-2 md:gap-4">
                 {completion && (
@@ -219,9 +221,12 @@ export default function Home() {
               </div>
             </div>
             
-            <div className="w-full h-full min-h-[320px] p-4 overflow-y-auto whitespace-pre-wrap text-slate-700 bg-transparent leading-relaxed">
+            <div 
+              id="optimized-text"
+              className="w-full h-full min-h-[320px] p-4 overflow-y-auto whitespace-pre-wrap text-slate-700 bg-transparent leading-relaxed"
+            >
               {completion ? (
-                showDiff ? renderDiff(submittedText, completion) : completion
+                showDiff && !isLoading ? renderDiff(submittedText, completion) : completion
               ) : (
                 <div className="h-full flex items-center justify-center text-slate-400 text-sm text-center px-8">
                   O resultado otimizado aparecerá aqui em tempo real...

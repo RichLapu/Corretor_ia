@@ -17,6 +17,10 @@ export async function POST(req: Request) {
 
   const selectedInstruction = systemInstructions[option] || systemInstructions.corrigir;
 
+  if (!prompt || prompt.trim() === '') {
+    return new Response("O texto original não pode estar vazio.", { status: 400 });
+  }
+
   try {
     const result = await streamText({
       model: google('gemini-3.5-flash-lite'), 
